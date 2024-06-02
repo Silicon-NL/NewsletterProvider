@@ -27,11 +27,8 @@ namespace NewsletterProvider.Functions
                     var existingSubscriber = await _dataContext.AspNetSubscribers.FirstOrDefaultAsync(x => x.Email == subscribeEntity.Email);
                     if (existingSubscriber != null)
                     {
-                        _dataContext.Entry(existingSubscriber).CurrentValues.SetValues(subscribeEntity);
-                        await _dataContext.SaveChangesAsync();
-                        return new OkObjectResult(new { Status = 200, Message = "Subscriber was updated." });
+                        return new ConflictObjectResult(new { Status = 409, Message = "Subscriber already exists." });
                     }
-
                     _dataContext.AspNetSubscribers.Add(subscribeEntity);
                     await _dataContext.SaveChangesAsync();
                     return new OkObjectResult(new { Status = 201, Message = "Subscriber is now subscribed." });
